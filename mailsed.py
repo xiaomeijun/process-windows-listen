@@ -1,30 +1,37 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
+#! /usr/bin/env python
+#coding=utf-8
 
-import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
+from smtplib import SMTP_SSL
 
-# 第三方 SMTP 服务
-mail_host = "smtp.sohu.com"  # 设置服务器
-mail_user = "xiaomeijun1"  # 用户名
-mail_pass = "xiao*1982"  # 口令
 
-sender = '119733591@qq.com'
-receivers = ['119733591@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+#qq邮箱smtp服务器
+host_server = 'smtp.sohu.com'
+#sender_qq为发件人的qq号码
+sender_qq = 'xiaomeijun1@sohu.com'
+#pwd为qq邮箱的授权码
+pwd = 'xiao*1983' ## xh**********bdc
+#发件人的邮箱
+sender_qq_mail = 'xiaomeijun1@sohu.com'
+#收件人邮箱
+receiver = '119733591@qq.com'
 
-message = MIMEText('Python 邮件发送测试...', 'plain', 'utf-8')
-message['From'] = Header("菜鸟教程", 'utf-8')
-message['To'] = Header("测试", 'utf-8')
+#邮件的正文内容
+mail_content = '你好，这是使用python登录qq邮箱发邮件的测试'
+#邮件标题
+mail_title = 'Maxsu的邮件'
 
-subject = 'Python SMTP 邮件测试'
-message['Subject'] = Header(subject, 'utf-8')
+#ssl登录
+smtp = SMTP_SSL(host_server)
+#set_debuglevel()是用来调试的。参数值为1表示开启调试模式，参数值为0关闭调试模式
+smtp.set_debuglevel(1)
+smtp.ehlo(host_server)
+smtp.login(sender_qq, pwd)
 
-try:
-    smtpObj = smtplib.SMTP()
-    smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
-    smtpObj.login(mail_user, mail_pass)
-    smtpObj.sendmail(sender, receivers, message.as_string())
-    print("邮件发送成功")
-except smtplib.SMTPException:
-    print("Error: 无法发送邮件")
+msg = MIMEText(mail_content, "plain", 'utf-8')
+msg["Subject"] = Header(mail_title, 'utf-8')
+msg["From"] = sender_qq_mail
+msg["To"] = receiver
+smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
+smtp.quit()
